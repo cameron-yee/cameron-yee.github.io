@@ -46,10 +46,10 @@
         <meta name="tags" content="publishing">
 
         <meta property="og:locale" content="" />
-    <meta property="og:site_name" content="Canvas LMS API Blog" />
+    <meta property="og:site_name" content="Upwards and Onwards" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Canvas LMS API Blog" />
-    <meta property="og:description" content="View the blog." />
+    <meta property="og:title" content="Upwards and Onwards" />
+    <meta property="og:description" content="So you can waste your time in a fun way" />
     <meta property="og:url" content="https://cameron-yee.github.io" />
       <meta name="og:image" content="https://cameron-yee.github.io/theme/images/post-bg.jpg">
 
@@ -120,7 +120,144 @@
         <div class="inner">
             <section class="post-content">
                 <h1>Automating File Renaming</h1>
-<p>File naming conventions are important.</p>
+<h2>What:</h2>
+<p>Today I am going to explain how to use Python and a few other tools to automatically rename downloaded files to match naming conventions.</p>
+<h2>Why:</h2>
+<p>We've all visited websites that contain spaces in their urls.  While functionality is not affected, seeing % signs in a url is ugly and unprofessional.  Because of this, it is a good idea for companies to implement naming conventions for files that will be opened on a web browser.  </p>
+<h2>Who:</h2>
+<p>This post will be useful to anyone that works with file organization.  At BSCS, a lot of our projects involve websites that link to PDFs that open in browser tabs.  We store all of our project files on a media server.  In order to keep the server as organized and clean as possible, all files that are stored on it must be named properly before being added.  More often than not, documents are not named properly when they are sent to our team to store on the media server.  Therefore, we are consistently renaming files.  </p>
+<h2>How:</h2>
+<p>This process will involve 3 steps: Python, fswatch installation, and Configuration.</p>
+<h3>Step 1. Python</h3>
+<p>Python will do the actual file renaming.  Create a new file called 'rename_files.py'. The Python process will be as follows:</p>
+<ol>
+<li>Set a directory path where you want to rename files.  Most likely '/Users/<username>/Downloads'.</li>
+<li>
+<p>Get every file path in the directory, and ignore files that you want to ignore</p>
+<p>'''python
+def getFilePaths(directory):
+    files = []
+    #Gets all files in given directory
+    dir_files = os.listdir(directory)
+    #Creates new list of files in the directory while ignoring files where  we don't want to change the name
+    relevant_files = [f for f in dir_files if f not in ['.rename_files.py', '.DS_Store', '.localized']]</p>
+<div class="highlight"><pre><span></span>#Appends the file name to the directory path to get a full file path for each file
+for f in relevant_files:
+    files.append(directory + &#39;/{}&#39;.format(f))
+
+return files
+</pre></div>
+
+
+<p>'''</p>
+</li>
+<li>
+<p>Change the file names to match naming conventions. (This will depend on what you want)</p>
+<p>For us, we want to all our file names to be lower case, have no unnecessary punctuation, and have underscores in between words:</p>
+<p>'''python
+def renameFile(f):</p>
+<h1>Gets file name from path</h1>
+<p>base = os.path.basename(f)</p>
+<h1>Ensures file name does not contain capital letters</h1>
+<p>base_lower = base.lower()</p>
+<h1>Replaces spaces with underscores</h1>
+<p>name = base_lower.replace(' ','_') </p>
+<h1>Calls function to remove punctuation seen below, stores value in new variable so we're not mutating variables</h1>
+<p>name_2 = stripPunctuation(name)</p>
+<h1>Calls function that is explained below</h1>
+<p>final_name = removeDoubleFileType(name_2)</p>
+<h1>Gets path of directory that file is stored in ('/Users/<username>/Downloads')</h1>
+<p>dirname = os.path.dirname(f)</p>
+<h1>Ensures that our original file path is type String.  This is important for os.rename()</h1>
+<p>sf = str(f)</p>
+<h1>Stores our new file path with the new name</h1>
+<p>sdn = str(dirname + '/' + final_name)</p>
+<h1>Renames the original file with the new name</h1>
+<p>os.rename(sf,sdn)
+'''</p>
+<p>There are two function calls above.  The first removes punctuation from the file name:</p>
+<p>'''python
+def stripPunctuation(name):
+    #Removes underscores from the list of puncuation to check for
+    x = string.punctuation.replace('_','')
+    #Removes periods from the list of puncuation to check for
+    punct = x.replace('.','')
+    #Makes a punctuation table that is useable by string.translate()
+    table = str.maketrans('', '', punct)
+    #Actually removes punctuation from str
+    final_name = name.translate(table)
+    return final_name
+'''</p>
+<p>In our Google Drive, some of the files are named '<name>.docx', so they would be named '<name>.docx.pdf' if we download them as a PDF. The second function makes sure that this is fixed in the file rename:</p>
+<p>'''python
+def removeDoubleFileType(name_2):
+    final_name = re.sub('docx.pdf$','pdf', name_2) <br>
+    return final_name
+ '''</p>
+<p>Finally, we call the appropriate functions.  Our final main function looks like:</p>
+<p>'''python
+if <strong>name</strong> == '<strong>main</strong>':
+    #Hardcoded to automate with fswatch
+    directory = '/Users/cyee/Downloads'
+    files = getFilePaths(directory)
+    for f in files:
+        renameFile(f)
+ '''</p>
+</li>
+</ol>
+<h3>Step 2. Install fswatch</h3>
+<div class="highlight"><pre><span></span>At this point, we can rename files in a folder by running *python3 rename_files.py*.  Now we are going to automate this so that we do not have to run a python script manually every time we want to download a file.  For this, we are going to use a file change monitor called fswatch.  To use fswatch, follow the installation instructions from one of these sites:
+
+http://emcrisostomo.github.io/fswatch/doc/
+
+https://github.com/emcrisostomo/fswatch
+
+I recommend using Homebrew and running the following command from Terminal:
+
+    &#39;&#39;&#39;
+    $ brew install fswatch
+    &#39;&#39;&#39;
+
+ Once fswatch is installed it should come ready to use.  If not, see the fswatch documentation for help.
+</pre></div>
+
+
+<h3>Step 3. Configuration</h3>
+<div class="highlight"><pre><span></span><span class="n">The</span> <span class="n">final</span> <span class="n">step</span> <span class="ow">is</span> <span class="n">to</span> <span class="n">turn</span> <span class="n">on</span> <span class="n">fswatch</span> <span class="n">to</span> <span class="n">watch</span> <span class="n">the</span> <span class="n">Downloads</span> <span class="n">folder</span><span class="p">,</span> <span class="ow">and</span> <span class="n">run</span> <span class="n">rename_files</span><span class="o">.</span><span class="n">py</span> <span class="k">if</span> <span class="n">anything</span> <span class="ow">is</span> <span class="n">downloaded</span><span class="o">.</span>  <span class="n">First</span><span class="p">,</span> <span class="n">reopen</span> <span class="o">*</span><span class="n">rename_files</span><span class="o">.</span><span class="n">py</span><span class="o">*</span> <span class="ow">and</span> <span class="n">add</span> <span class="n">the</span> <span class="n">following</span> <span class="n">to</span> <span class="n">the</span> <span class="n">top</span> <span class="n">of</span> <span class="n">the</span> <span class="nb">file</span><span class="p">:</span>
+
+<span class="sd">&#39;&#39;&#39;python</span>
+<span class="sd">#!/usr/local/bin/python3</span>
+<span class="sd">import sys</span>
+<span class="sd">import os</span>
+<span class="sd">from glob import glob</span>
+<span class="sd">import string</span>
+<span class="sd">import re</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="n">This</span> <span class="n">will</span> <span class="n">allow</span> <span class="n">the</span> <span class="nb">file</span> <span class="n">to</span> <span class="n">be</span> <span class="n">called</span> <span class="kn">from</span> <span class="nn">bash.</span>  <span class="nn">Next</span><span class="p">,</span> <span class="n">we</span> <span class="n">must</span> <span class="n">give</span> <span class="n">the</span> <span class="n">system</span> <span class="n">permission</span> <span class="n">to</span> <span class="n">execute</span> <span class="n">the</span> <span class="n">python</span> <span class="nb">file</span><span class="o">.</span>  <span class="n">In</span> <span class="n">terminal</span> <span class="n">enter</span><span class="p">:</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">chmod u+x &lt;path&gt;/rename_files.py</span>
+
+<span class="sd">Finally, we must call fswatch.  In the home directory (/Users/&lt;user&gt;/~), edit the file called *.bash_profile*.  Create a new file with the same name if it does not yet exist.  The file needs to contain at least these two lines:</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="n">export</span> <span class="n">PATH</span><span class="o">=</span><span class="s2">&quot;$PATH:/Users/&lt;user&gt;/bin&quot;</span>
+<span class="n">fswatch</span> <span class="o">-</span><span class="n">om</span> <span class="n">fsevents_monitor</span> <span class="o">~/</span><span class="n">Downloads</span> <span class="o">|</span> <span class="n">xargs</span> <span class="o">-</span><span class="n">n1</span> <span class="o">&lt;</span><span class="n">path</span><span class="o">&gt;/</span><span class="n">rename_files</span><span class="o">.</span><span class="n">py</span> <span class="o">&amp;</span>
+<span class="s1">&#39;&#39;&#39;</span>
+
+<span class="s1">The *export* line sets the location that the system looks for when running a command.  The fswatch line monitors the Downloads folder and executes rename_files.py if an event is heard.  We are using fswatch whenever *.bash_profile* is read.  Therefore, for this automation to work, a command line with bash must be running.</span>
+</pre></div>
+
+
+<h2>Duly Noted:</h2>
+<div class="highlight"><pre><span></span>This solution works, but there are more efficient solutions.  It is possible to run fswatch without command line running by writing an OS daemon that runs on startup.  This is a better solution becuase it is not reliant on another program.  Furthermore, there is an issue with running fswatch through Terminal as a background process because multiple instances of fswatch will run if multiple terminal windows are open.  While this is an issue, I do not think it is a big deal because it is such a small background process.  Furthermore, in software/web development, Terminal is always being used anyways.  Lastly, this process could be done purely in bash and eliminate the need for a python script.  Let me know of ways this process can be further improved.
+</pre></div>
+
+
+<h1>View code:</h1>
+<div class="highlight"><pre><span></span>https://github.com/cameron-yee/rename_files
+</pre></div>
             </section>
 
             <section class="post-info">
