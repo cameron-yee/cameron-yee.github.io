@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Upwards and Onwards - Canvas</title><link href="https://cameron-yee.github.io/" rel="alternate"></link><link href="https://cameron-yee.github.io/feeds/canvas.atom.xml" rel="self"></link><id>https://cameron-yee.github.io/</id><updated>2018-03-12T01:09:00-06:00</updated><entry><title>Part 1: File Setup</title><link href="https://cameron-yee.github.io/part-1-file-setup" rel="alternate"></link><published>2018-03-12T01:09:00-06:00</published><updated>2018-03-12T01:09:00-06:00</updated><author><name>Cameron Yee</name></author><id>tag:cameron-yee.github.io,2018-03-12:/part-1-file-setup</id><summary type="html">&lt;p&gt;Setup your file structure to make this work.&lt;/p&gt;</summary><content type="html">&lt;h1&gt;Part 1: File Setup&lt;/h1&gt;
+&lt;p&gt;I designed the Canvas LMS API CLI to work specifically with our file structure setup for our course html pages.  There is one important conventions to follow if you would like to use our code as is:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;1. HTML files should be named as: XX_page-url.html
+    * Example: 00_welcome-page.html
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;These guidelines are based on how the CLI code is written.  The code can be easily altered to work with other file structure systems.  An example directory is shown below:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;./
+    top_directory/
+        /sub_directory
+            /sub_sub_directory
+                00_first_file.html
+                01_second_file.html
+            /sub_sub_directory_1
+                00_other_file.html
+                01_next.html
+        /sub_directory_1
+            00_some_file.html
+&lt;/pre&gt;&lt;/div&gt;</content><category term="pelican"></category><category term="publishing"></category></entry><entry><title>Welcome</title><link href="https://cameron-yee.github.io/welcome-to-capi" rel="alternate"></link><published>2018-03-09T01:09:00-07:00</published><updated>2018-03-09T01:09:00-07:00</updated><author><name>Cameron Yee</name></author><id>tag:cameron-yee.github.io,2018-03-09:/welcome-to-capi</id><summary type="html">&lt;p&gt;Welcome to the Canvas LMS API Series&lt;/p&gt;</summary><content type="html">&lt;h1&gt;Canvas LMS API Series&lt;/h1&gt;
+&lt;p&gt;This blog will explain how to use the Canvas LMS API to update course content through building a CLI.  Content management using the Canvas website can be tedious and unnecessary.  Personally, I have wasted hours of time making the same change to each individual page in a course.  Using the Canvas API, it is possible to make mass changes to course content, and push changes directly to a Canvas course using terminal. &lt;/p&gt;</content><category term="pelican"></category><category term="publishing"></category></entry></feed>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title>Part 2: Canvas API Calls</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="https://cameron-yee.github.io" rel="canonical" />
+
+  <!-- Feed -->
+
+  <link href="https://cameron-yee.github.io/theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="https://cameron-yee.github.io/theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+    <link href="https://cameron-yee.github.io/part-2-canvas-api-calls" rel="canonical" />
+
+        <meta name="description" content="Learn to interact with Canvas LMS API using python.">
+
+        <meta name="author" content="Cameron Yee">
+
+        <meta name="tags" content="pelican">
+        <meta name="tags" content="publishing">
+
+        <meta property="og:locale" content="" />
+    <meta property="og:site_name" content="Upwards and Onwards" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Upwards and Onwards" />
+    <meta property="og:description" content="So you can waste your time in a fun way" />
+    <meta property="og:url" content="https://cameron-yee.github.io" />
+      <meta name="og:image" content="https://cameron-yee.github.io/theme/images/post-bg.jpg">
+
+  <meta property="og:type" content="article">
+            <meta property="article:author" content="https://cameron-yee.github.io/author/cameron-yee.html">
+  <meta property="og:url" content="https://cameron-yee.github.io/part-2-canvas-api-calls">
+  <meta property="og:title" content="Part 2: Canvas API Calls">
+  <meta property="article:published_time" content="2018-07-06 01:09:00-06:00">
+            <meta property="og:description" content="Learn to interact with Canvas LMS API using python.">
+
+            <meta property="og:image" content="https://cameron-yee.github.io/theme/images/post-bg.jpg">
+</head>
+<!-- TODO : Body class -->
+<body class="home-template">
+
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+        <li><a href="https://cameron-yee.github.io/pages/about.html" role="presentation">About Me</a></li>
+        <li><a href="https://cameron-yee.github.io/category/python" role="presentation">Python</a></li>
+        <li><a href="https://cameron-yee.github.io/category/canvas" role="presentation">Canvas LMS API Series</a></li>
+        <li><a href="https://cameron-yee.github.io/category/javascript" role="presentation">Javascript</a></li>
+      <!-- 
+
+ -->
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="https://cameron-yee.github.io" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">Part 2: Canvas API Calls</h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="https://cameron-yee.github.io/author/cameron-yee.html">Cameron yee</a>
+            | <time datetime="Fri 06 July 2018">Fri 06 July 2018</time>
+        </span>
+        <!-- TODO : Modified check -->
+            <span class="post-meta"> | Updated on Mon 12 March 2018</span>
+        
+            <div class="post-cover cover" style="background-image: url('https://cameron-yee.github.io/theme/images/post-bg.jpg')">
+        
+      </div>
+    </header>    
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <h2>What:</h2>
+<p>In this article, I will discuss how to use Python's requests library to make API calls to Canvas LMS.</p>
+<h2>WHY:</h2>
+<p>Canvas' API allows us to alter courses, pages, modules, and more in a simple way.  I originally started using its functionality because I was tired of manually having to insert HTML pages into Canvas' HTML Editor every time a page had an update.  By using the API, I am now able to test page layouts almost instantaneously.  Additionally, if I need to make a change to every page in a course (ex. add a footer), I can update the entire course at once instead of manually updating every page.  It also can be used to query course or page data that is returned as a JSON object.</p>
+<h2>WHO:</h2>
+<p>Anyone that is responsible for Canvas content management.</p>
+<h2>HOW:</h2>
+<p>First, in a Canvas admin account go to <strong>Account &gt; Settings</strong> on the left menu.  Scroll down to a section labeled <strong>Approved Integrations</strong>.  Generate a developer access token by clicking the '+ New Access Token' button.  This allows developers to test integrations with Canvas (such as API calls).  Make sure to save the generated token somewhere before leaving the page because it is unviewable afterwards.</p>
+<p>Now for the code.  Make sure python's requests library is installed and imported.</p>
+<div class="highlight"><pre><span></span>$ pip3 install requests
+</pre></div>
+
+
+<p>In python file:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+</pre></div>
+
+
+<p>Making requests is simple, but the code will vary slightly depending on the request.  Let's examine a request to update a wiki page's content:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">updateIndividualPage</span><span class="p">(</span><span class="n">course_id</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">page_url</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">html_content</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">url_base</span> <span class="o">+</span> <span class="n">course_id</span> <span class="o">+</span> <span class="o">/</span><span class="n">pages</span><span class="o">/</span><span class="s1">&#39; + page_url</span>
+
+    <span class="k">if</span> <span class="n">html_content</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;wiki_page[body]&#39;</span><span class="p">,</span> <span class="n">html_content</span><span class="p">),]</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">html</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;wiki_page[body]&#39;</span><span class="p">,</span> <span class="n">html</span><span class="p">),]</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">access_token</span> <span class="o">=</span> <span class="n">getAccessToken</span><span class="p">()</span> <span class="c1">#Custom function</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="s2">&quot;Bearer &quot;</span> <span class="o">+</span> <span class="n">access_token</span><span class="p">}</span>
+    <span class="n">course_id</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1">#example course_id</span>
+    <span class="n">page_url</span> <span class="o">=</span> <span class="n">example</span><span class="o">-</span><span class="n">page</span><span class="o">-</span><span class="n">url</span>
+    <span class="n">file_path</span> <span class="o">=</span> <span class="s1">&#39;/Users/path-to-file/file.html&#39;</span>
+    <span class="n">url_base</span> <span class="o">=</span> <span class="s1">&#39;https://&lt;organization&gt;.instructure.com/api/v1/courses/&#39;</span>
+
+    <span class="n">updateIndividualPage</span><span class="p">(</span><span class="n">course_id</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">page_url</span><span class="p">,</span> <span class="n">file_path</span><span class="p">)</span>
+</pre></div>
+
+
+<p>Now let's go through this.</p>
+<p>I created this function to be able to optionally take html content as a parameter in string format.  The url will consist of the required api url (<code>url_base</code> variable in main) with the path to the wiki page concatenated to the end.  This is the location where we want to send our data.  This function has 2 possible requests depending on if html content was provided in the function call.  The format is almost indentical either way.  For these requests, we are going to replace the existing content of an canvas wiki page with our new html content.  To do this, we will replace the wiki page parameter <strong>wiki_page[body]</strong>.  The possible options can be seen on the documentation site which I've linked to at the bottom of this post.  We will specify our replacement in the <code>data</code> variable by storing the Canvas parameter and the new content in a tuple.  To alter additional properties of the Canvas page, add additional tuples to the <code>data</code> variable:</p>
+<div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;wiki_page[body]&#39;</span><span class="p">,</span> <span class="n">html</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;wiki_page[title]&#39;</span><span class="p">,</span> <span class="s1">&#39;New Page Title&#39;</span><span class="p">),]</span>
+</pre></div>
+
+
+<p>The actual api request will take 3 parameters: url, headers, and data.</p>
+<p>The url is the api base plus the location of the page we want to edit.  Headers provide the access_token so Canvas can authorize us making changes.  I would recommend storing the access token as an environment variable, or placing it in another python file as a variable and importing that file.  If the later option is chosen, make sure to add the file to .gitignore to avoid version tracking of the file.  The data parameter is the content that we want to update.  This specific request uses the PUT protocol to send the data in order to be saved.  Other requests use GET, POST, and DELETE depending on the goal.  These are specified in the Canvas API docs.</p>
+<p>One last thing to note, is that the <code>else</code> statement reads and saves the html content to PUT if a file path is given, but no HTML content is provided.</p>
+<h2>Duly Noted:</h2>
+<p>This system works well for testing API calls.  For creating programs for reuse (outside of individual use), Canvas requires that OAuth2 authentication be setup.  For reasonable usage, a system for calling the API requests should be set up.  Personally, I used python's argparse library to create a CLI (Command Line Interface) so I can update Canvas straight from terminal, giving the appropriate request paramters as command arguments.  Finally, python's requests library is not the only way to interact with the API.  Curl works well, and there are probably other possibilities as well.</p>
+<h4><a href="https://canvas.instructure.com/doc/api/index.html">Canvas API Documentation</a></h4>
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=Part 2: Canvas API Calls&amp;url=https://cameron-yee.github.io/part-2-canvas-api-calls" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=https://cameron-yee.github.io/part-2-canvas-api-calls" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=https://cameron-yee.github.io/part-2-canvas-api-calls" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+                <aside class="post-tags">
+<a href="https://cameron-yee.github.io/tag/pelican.html">pelican</a><a href="https://cameron-yee.github.io/tag/publishing.html">publishing</a>                </aside>
+
+                <div class="clear"></div>
+
+ 
+
+                </section>
+
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+  
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="https://cameron-yee.github.io/theme/js/script.js"></script>
+  
+</body>
+</html>

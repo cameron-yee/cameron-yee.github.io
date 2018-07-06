@@ -1,35 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Canvas LMS API Blog - Python</title><link href="https://cameron-yee.github.io/" rel="alternate"></link><link href="https://cameron-yee.github.io/feeds/python.atom.xml" rel="self"></link><id>https://cameron-yee.github.io/</id><updated>2018-03-12T01:09:00-06:00</updated><entry><title>Part 1: File Setup</title><link href="https://cameron-yee.github.io/part-1-file-setup" rel="alternate"></link><published>2018-03-12T01:09:00-06:00</published><updated>2018-03-12T01:09:00-06:00</updated><author><name>Cameron Yee</name></author><id>tag:cameron-yee.github.io,2018-03-12:/part-1-file-setup</id><summary type="html">&lt;p&gt;Setup your file structure to make this work.&lt;/p&gt;</summary><content type="html">&lt;h1&gt;Part 1: File Setup&lt;/h1&gt;
-&lt;p&gt;I designed the Canvas LMS API CLI to work specifically with our file structure setup for our course html pages.  There are two important conventions to follow if you would like to use our code as is:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;1. HTML files should be named as: XX_page-url.html
-    * Example: 00_welcome-page.html
-2. If subdirectories are used, put EVERY HTML file in a subdirectory within the parent HTML directory.  It is also alright to have all of the HTML files stored in a single directory.  The important thing is to do one or the other.  DO NOT have HTML files in the parent directory with other HTML sub-folders.
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Upwards and Onwards - Python</title><link href="https://cameron-yee.github.io/" rel="alternate"></link><link href="https://cameron-yee.github.io/feeds/python.atom.xml" rel="self"></link><id>https://cameron-yee.github.io/</id><updated>2018-06-19T01:09:00-06:00</updated><entry><title>Automating File Renaming</title><link href="https://cameron-yee.github.io/automating-file-renaming" rel="alternate"></link><published>2018-06-19T01:09:00-06:00</published><updated>2018-06-19T01:09:00-06:00</updated><author><name>Cameron Yee</name></author><id>tag:cameron-yee.github.io,2018-06-19:/automating-file-renaming</id><summary type="html">&lt;p&gt;Learn how to use Python to enforce file naming conventions.&lt;/p&gt;</summary><content type="html">&lt;h2&gt;What:&lt;/h2&gt;
+&lt;p&gt;Today I am going to explain how to use Python and a few other tools to automatically rename downloaded files to match wanted naming conventions.&lt;/p&gt;
+&lt;h2&gt;Why:&lt;/h2&gt;
+&lt;p&gt;We've all visited websites that contain spaces in the urls.  While functionality is not affected, seeing '%' signs in a url is ugly and unprofessional.  Because of this, it is a good idea for companies to implement naming conventions for files that will be opened on a web browser.&lt;/p&gt;
+&lt;h2&gt;Who:&lt;/h2&gt;
+&lt;p&gt;This post will be useful to anyone that works with file organization.  At &lt;a href="https://bscs.org/"&gt;BSCS&lt;/a&gt;, a lot of our projects involve websites that link to files that open in browser tabs.  We store all of our project files on a media server.  In order to keep the server as organized and clean as possible, all files that are stored on it must be named properly before being added.  More often than not, documents are not named properly when they are sent to our team to store on the media server.  Because our team was consistently renaming files, I decided to automate the process to save us time on this tedioustask. &lt;/p&gt;
+&lt;h2&gt;How:&lt;/h2&gt;
+&lt;p&gt;This process will involve 3 steps: Python, fswatch installation, and Configuration.&lt;/p&gt;
+&lt;h3&gt;Step 1. Python&lt;/h3&gt;
+&lt;p&gt;I used Python to change the file names.  Create a new file called &lt;strong&gt;rename_files.py&lt;/strong&gt;. The basic Python code is as follows:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;1.&lt;/strong&gt; Set a directory path where you want to rename files.  Most likely &lt;strong&gt;/Users/&amp;lt;username&amp;gt;/Downloads&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;2.&lt;/strong&gt; Get every file path in the directory, and ignore files that you want to ignore.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;getFilePaths&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;directory&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="n"&gt;files&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;
+    &lt;span class="c1"&gt;#Gets all files in given directory&lt;/span&gt;
+    &lt;span class="n"&gt;dir_files&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;os&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;listdir&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;directory&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="c1"&gt;#Creates new list of files in the directory while ignoring files where  we don&amp;#39;t want to change the name&lt;/span&gt;
+    &lt;span class="n"&gt;relevant_files&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;dir_files&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;.DS_Store&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;.localized&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt;
+
+    &lt;span class="c1"&gt;#Appends the file name to the directory path to get a full file path for each file&lt;/span&gt;
+    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;relevant_files&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;files&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;directory&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;/{}&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;files&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;These guidelines are based on how the CLI code is written.  The code can be easily altered to work with other file structure systems.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;./
-    top_directory/
-        /sub_directory
-            /sub_sub_directory
-                00_first_file.html
-                01_second_file.html
-            /sub_sub_directory_1
-                00_other_file.html
-                01_next.html
-        /sub_directory_1
-            00_some_file.html
+&lt;p&gt;&lt;strong&gt;3.&lt;/strong&gt; Change the file names to match naming conventions. (This will depend on what you want).&lt;/p&gt;
+&lt;p&gt;For us, we want to all our file names to be lower case, have no unnecessary punctuation, and have underscores in between words:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;renameFile&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="c1"&gt;#Gets file name from path&lt;/span&gt;
+    &lt;span class="n"&gt;base&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;os&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;basename&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="c1"&gt;#Ensures file name does not contain capital letters&lt;/span&gt;
+    &lt;span class="n"&gt;base_lower&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;base&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;lower&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+    &lt;span class="c1"&gt;#Replaces spaces with underscores&lt;/span&gt;
+    &lt;span class="n"&gt;name&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;base_lower&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;replace&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39; &amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;_&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; 
+    &lt;span class="c1"&gt;#Calls function to remove punctuation seen below, stores value in new variable so we&amp;#39;re not mutating variables&lt;/span&gt;
+    &lt;span class="n"&gt;name_2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;stripPunctuation&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+    &lt;span class="c1"&gt;#Calls function that is explained below&lt;/span&gt;
+    &lt;span class="n"&gt;final_name&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;removeDoubleFileType&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;name_2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+    &lt;span class="c1"&gt;#Gets path of directory that file is stored in (&amp;#39;/Users/&amp;lt;username&amp;gt;/Downloads&amp;#39;)&lt;/span&gt;
+    &lt;span class="n"&gt;dirname&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;os&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dirname&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="c1"&gt;#Ensures that our original file path is type String.  This is important for os.rename()&lt;/span&gt;
+    &lt;span class="n"&gt;sf&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;str&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="c1"&gt;#Stores our new file path with the new name&lt;/span&gt;
+    &lt;span class="n"&gt;sdn&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;str&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;dirname&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;/&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;final_name&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="c1"&gt;#Renames the original file with the new name&lt;/span&gt;
+    &lt;span class="n"&gt;os&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;rename&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sf&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;sdn&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;OR&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;./
-    top_directory/
-        00_first_file.html
-        02_second_file.html
-        03_other_file.html
+&lt;p&gt;There are two function calls above.  The first removes punctuation from the file name:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;stripPunctuation&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="c1"&gt;#Removes underscores from the list of puncuation to check for&lt;/span&gt;
+    &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;string&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;punctuation&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;replace&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;_&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="c1"&gt;#Removes periods from the list of puncuation to check for&lt;/span&gt;
+    &lt;span class="n"&gt;punct&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;replace&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;.&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="c1"&gt;#Makes a punctuation table that is useable by string.translate()&lt;/span&gt;
+    &lt;span class="n"&gt;table&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;str&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;maketrans&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;punct&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="c1"&gt;#Actually removes punctuation from str&lt;/span&gt;
+    &lt;span class="n"&gt;final_name&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;translate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;table&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;final_name&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;In the first structure example, there are no HTML files directly in top_directory.  In the second structure example, there are no subdirectories because there are direct HTML files.&lt;/p&gt;</content><category term="pelican"></category><category term="publishing"></category></entry><entry><title>Welcome</title><link href="https://cameron-yee.github.io/welcome" rel="alternate"></link><published>2018-03-09T01:09:00-07:00</published><updated>2018-03-09T01:09:00-07:00</updated><author><name>Cameron Yee</name></author><id>tag:cameron-yee.github.io,2018-03-09:/welcome</id><summary type="html">&lt;p&gt;Welcome to the Canvas LMS API Blog&lt;/p&gt;</summary><content type="html">&lt;h1&gt;Canvas LMS API Blog&lt;/h1&gt;
-&lt;p&gt;This blog will explain how to use the Canvas LMS API to update course content through building a CLI.  Content management using the Canvas website can be tedious and unnecessary.  Personally, I have wasted hours of time making the same change to each individual page in a course.  Using the Canvas API, it is possible to make mass changes to course content, and push changes directly to a Canvas course using terminal. &lt;/p&gt;</content><category term="pelican"></category><category term="publishing"></category></entry></feed>
+&lt;p&gt;In our Google Drive, some of the files are named '&amp;lt;name&amp;gt;.docx', so they would be named '&amp;lt;name&amp;gt;.docx.pdf' if we download them as a PDF. The second function makes sure that this is fixed in the file rename:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;removeDoubleFileType&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;name_2&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="n"&gt;final_name&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;re&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sub&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;docx.pdf$&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;pdf&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;name_2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;   
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;final_name&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Finally, we call the appropriate functions.  Our final main function looks like:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="vm"&gt;__name__&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="c1"&gt;#Hardcoded to automate with fswatch&lt;/span&gt;
+    &lt;span class="n"&gt;directory&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;/Users/&amp;lt;user&amp;gt;/Downloads&amp;#39;&lt;/span&gt;
+    &lt;span class="n"&gt;files&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;getFilePaths&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;directory&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;files&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;renameFile&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;Step 2. Install fswatch&lt;/h3&gt;
+&lt;p&gt;At this point, we can rename files in a folder by running &lt;code&gt;python3 rename_files.py&lt;/code&gt;.  Now we are going to automate this so that we do not have to run a python script manually every time we want to download a file.  For this, we are going to use a file change monitor called fswatch.  To use fswatch, follow the installation instructions from one of these sites:&lt;/p&gt;
+&lt;p&gt;&lt;a href="http://emcrisostomo.github.io/fswatch/doc/"&gt;http://emcrisostomo.github.io/fswatch/doc/&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://github.com/emcrisostomo/fswatch"&gt;https://github.com/emcrisostomo/fswatch&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;I recommend using Homebrew and running the following command from Terminal:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ brew install fswatch
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Once fswatch is installed it should come ready to use.  If not, see the fswatch documentation for help.&lt;/p&gt;
+&lt;h3&gt;Step 3. Configuration&lt;/h3&gt;
+&lt;p&gt;The final step is to turn on fswatch to watch the Downloads folder, and run rename_files.py if anything is downloaded.  First, reopen &lt;strong&gt;rename_files.py&lt;/strong&gt; and add the following to the top of the file:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="ch"&gt;#!/usr/local/bin/python3&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;sys&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;os&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;glob&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;glob&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;string&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;re&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This will allow the file to be called from bash.  Next, we must give the system permission to execute the python file.  In terminal enter:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;chmod u+x &amp;lt;path&amp;gt;/rename_files.py
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Finally, we must call fswatch.  In the home directory (&lt;strong&gt;/Users/&amp;lt;user&amp;gt;/~&lt;/strong&gt;), edit the file called &lt;strong&gt;.bash_profile&lt;/strong&gt;.  Create a new file with the same name if it does not yet exist.  The file needs to contain at least these two lines:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;PATH&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$PATH&lt;/span&gt;&lt;span class="s2"&gt;:/Users/&amp;lt;user&amp;gt;/bin&amp;quot;&lt;/span&gt;
+fswatch -om fsevents_monitor ~/Downloads &lt;span class="p"&gt;|&lt;/span&gt; xargs -n1 &amp;lt;path&amp;gt;/rename_files.py &lt;span class="p"&gt;&amp;amp;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The &lt;strong&gt;export&lt;/strong&gt; line sets the location that the system looks for when a command is ran in command line.  The fswatch line monitors the Downloads folder and executes rename_files.py if an event is heard.  We are using fswatch whenever &lt;strong&gt;.bash_profile&lt;/strong&gt; is read.  Therefore, for this automation to work, a command line with bash must be running.&lt;/p&gt;
+&lt;p&gt;That's it!  You can test to see if it works by opening command line, and downloading a file.  Check in the Downloads folder to see if the file is named correctly.  Another check is to use the &lt;code&gt;jobs&lt;/code&gt; command in command line.  If fswatch is running, &lt;code&gt;jobs&lt;/code&gt; will show it.&lt;/p&gt;
+&lt;h2&gt;Duly Noted:&lt;/h2&gt;
+&lt;p&gt;This solution works, but there are more efficient solutions.  It is possible to run fswatch without command line running by writing an OS daemon that runs on startup.  This is a better solution because it is not reliant on another program.  Furthermore, there is an issue with running fswatch through Terminal as a background process because multiple instances of fswatch will run if multiple terminal windows are open.  While this is an issue, I do not think it is a big enough deal not to use my solution.  As a tech person, I am constantly using Bash so I do not care that Bash has to be running.  Lastly, this process could be done purely in Bash and eliminate the need for a python script.  Let me know of ways this process can be further improved.&lt;/p&gt;
+&lt;h1&gt;View code:&lt;/h1&gt;
+&lt;p&gt;&lt;a href="https://github.com/cameron-yee/rename_files"&gt;https://github.com/cameron-yee/rename_files&lt;/a&gt;&lt;/p&gt;</content><category term="pelican"></category><category term="publishing"></category></entry></feed>
